@@ -7,8 +7,10 @@ import Dashboard from "./Dashboard";
 import Profile from "./Profile";
 import DoctorListAndBooking from "./DoctorListAndBooking";
 import DoctorSlotManagement from "./DoctorSlotManagement";
+import NotificationCenter from "./NotificationCenter";
+import AppointmentsListing from "./AppointmentsListing";
 
-// Airbnb Inspired Navigation Bar Component
+/* Airbnb Inspired Navigation Bar Component (with Notification center) */
 function Navbar({ theme, onToggleTheme }) {
   const { authenticated, user, logout } = useAuth();
   const navigate = useNavigate();
@@ -22,19 +24,23 @@ function Navbar({ theme, onToggleTheme }) {
           <Link to="/dashboard">Dashboard</Link>
         </li>
         <li>
+          <Link to="/appointments">Appointments</Link>
+        </li>
+        <li>
           <Link to="/booking">Book</Link>
         </li>
         <li>
           <Link to="/slots">Slots</Link>
         </li>
         <li>
-          <Link to="/notifications">Notifications</Link>
-        </li>
-        <li>
           <Link to="/profile">Profile</Link>
         </li>
       </ul>
-      <div className="navbar__actions">
+      <div className="navbar__actions" style={{ gap: 5 }}>
+        {/* Notification bell */}
+        {authenticated &&
+          <NotificationCenter />
+        }
         {!authenticated ? (
           <>
             <Link className="navbar__action" to="/login">Login</Link>
@@ -52,8 +58,8 @@ function Navbar({ theme, onToggleTheme }) {
             Logout{user && user.role ? ` (${user.role})` : ''}
           </button>
         )}
-        <button 
-          className="theme-toggle theme-toggle-navbar" 
+        <button
+          className="theme-toggle theme-toggle-navbar"
           onClick={onToggleTheme}
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
         >
@@ -64,7 +70,7 @@ function Navbar({ theme, onToggleTheme }) {
   );
 }
 
-// Layout for main application pages
+/* Layout for main application pages - inject notification in sidebar for "Appointments" */
 function MainLayout({ theme, onToggleTheme, children }) {
   return (
     <div className="app-shell">
@@ -76,18 +82,22 @@ function MainLayout({ theme, onToggleTheme, children }) {
               <Link to="/dashboard">🏠 Dashboard</Link>
             </li>
             <li>
+              <Link to="/appointments">📖 Appointments</Link>
+            </li>
+            <li>
               <Link to="/booking">📅 Booking</Link>
             </li>
             <li>
               <Link to="/slots">⏳ Slot Management</Link>
             </li>
             <li>
-              <Link to="/notifications">🔔 Notifications</Link>
-            </li>
-            <li>
               <Link to="/profile">👤 Profile</Link>
             </li>
           </ul>
+          <div style={{ marginTop: 24, paddingLeft: 9 }}>
+            {/* Mini notification display for sidebar (as link/badge) */}
+            <NotificationCenter asSidebarLink />
+          </div>
         </aside>
         <main className="main">{children}</main>
       </div>
@@ -123,8 +133,9 @@ function Booking() {
   );
 }
 
-import DoctorSlotManagement from "./DoctorSlotManagement";
+/*
 // SlotManagement - route/page for /slots
+*/
 function SlotManagement() {
   // Only allow slot management page for doctors; show message or redirect otherwise
   const { user } = useAuth();
@@ -146,12 +157,10 @@ function SlotManagement() {
   );
 }
 
+/* Old Notification placeholder route -- show AppointmentsListing here! */
 function Notifications() {
   return (
-    <div className="page">
-      <h1>Notifications</h1>
-      <p>Notification center placeholder.</p>
-    </div>
+    <AppointmentsListing />
   );
 }
 
@@ -163,7 +172,7 @@ function NotFound() {
   );
 }
 
-// Main Login/Register Page Wrappers
+/* Main Login/Register Page Wrappers - unchanged */
 function LoginPage({ theme, toggleTheme }) {
   return (
     <div className="App">
@@ -200,7 +209,9 @@ function RegisterPage({ theme, toggleTheme }) {
   );
 }
 
-// PUBLIC_INTERFACE
+/* PUBLIC_INTERFACE
+ * App - Added /appointments and routed /notifications to AppointmentsListing for consistency
+ */
 function App() {
   const [theme, setTheme] = useState('light');
 
@@ -234,9 +245,10 @@ function App() {
                   <Route path="/" element={<PrivateRoute><Navigate to="/dashboard" replace /></PrivateRoute>} />
                   <Route path="dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
                   <Route path="profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+                  <Route path="appointments" element={<PrivateRoute><AppointmentsListing /></PrivateRoute>} />
                   <Route path="booking" element={<PrivateRoute><Booking /></PrivateRoute>} />
                   <Route path="slots" element={<PrivateRoute><SlotManagement /></PrivateRoute>} />
-                  <Route path="notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+                  <Route path="notifications" element={<PrivateRoute><AppointmentsListing /></PrivateRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </MainLayout>
