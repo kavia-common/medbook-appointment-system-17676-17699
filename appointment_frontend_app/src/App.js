@@ -6,6 +6,7 @@ import { LoginForm, RegistrationForm } from './AuthForms';
 import Dashboard from "./Dashboard";
 import Profile from "./Profile";
 import DoctorListAndBooking from "./DoctorListAndBooking";
+import DoctorSlotManagement from "./DoctorSlotManagement";
 
 // Airbnb Inspired Navigation Bar Component
 function Navbar({ theme, onToggleTheme }) {
@@ -122,11 +123,25 @@ function Booking() {
   );
 }
 
+import DoctorSlotManagement from "./DoctorSlotManagement";
+// SlotManagement - route/page for /slots
 function SlotManagement() {
+  // Only allow slot management page for doctors; show message or redirect otherwise
+  const { user } = useAuth();
+  if (user && user.role === "doctor") {
+    return <DoctorSlotManagement />;
+  }
+  if (user && user.role !== "doctor") {
+    return (
+      <div className="page page-card">
+        <h2>Access Restricted</h2>
+        <p>This page is only available for doctors.</p>
+      </div>
+    );
+  }
   return (
-    <div className="page">
-      <h1>Slot Management</h1>
-      <p>Manage your availability slots here.</p>
+    <div className="page page-card">
+      <h2>Please login.</h2>
     </div>
   );
 }
