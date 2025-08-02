@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } f
 import './App.css';
 import { AuthProvider, useAuth } from './auth';
 import { LoginForm, RegistrationForm } from './AuthForms';
+import Dashboard from "./Dashboard";
+import Profile from "./Profile";
 
 // Airbnb Inspired Navigation Bar Component
 function Navbar({ theme, onToggleTheme }) {
@@ -98,32 +100,7 @@ function PrivateRoute({ children }) {
   return authenticated ? children : <Navigate to="/login" replace />;
 }
 
-// Main pages
-function Dashboard() {
-  const { user } = useAuth();
-  return (
-    <div className="page">
-      <h1>Dashboard</h1>
-      <p>Welcome, {user && user.role && user.role.charAt(0).toUpperCase() + user.role.slice(1)}!</p>
-      <p>Upcoming appointments, quick actions, and personalized info will appear here.</p>
-    </div>
-  );
-}
-
-function Profile() {
-  const { user } = useAuth();
-  return (
-    <div className="page page-card">
-      <h1>User Profile</h1>
-      <p>Profile details &amp; edit form placeholder.</p>
-      {user && (
-        <div style={{ marginTop: 12 }}>
-          <strong>Role:</strong> {user.role}
-        </div>
-      )}
-    </div>
-  );
-}
+// Booking, SlotManagement, Notifications remain inline for now
 
 function Booking() {
   return (
