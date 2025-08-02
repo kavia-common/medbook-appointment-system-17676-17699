@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
+import { AuthProvider, useAuth } from './auth';
+import { LoginForm, RegistrationForm } from './AuthForms';
 
 // Airbnb Inspired Navigation Bar Component
 function Navbar({ theme, onToggleTheme }) {
+  const { authenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
   return (
     <nav className="navbar">
       <div className="navbar__logo">
@@ -27,8 +31,23 @@ function Navbar({ theme, onToggleTheme }) {
         </li>
       </ul>
       <div className="navbar__actions">
-        <Link className="navbar__action" to="/login">Login</Link>
-        <Link className="navbar__action navbar__action--primary" to="/register">Register</Link>
+        {!authenticated ? (
+          <>
+            <Link className="navbar__action" to="/login">Login</Link>
+            <Link className="navbar__action navbar__action--primary" to="/register">Register</Link>
+          </>
+        ) : (
+          <button
+            className="navbar__action"
+            onClick={() => {
+              logout();
+              navigate("/login");
+            }}
+            style={{ color: "#FF5A5F" }}
+          >
+            Logout{user && user.role ? ` (${user.role})` : ''}
+          </button>
+        )}
         <button 
           className="theme-toggle theme-toggle-navbar" 
           onClick={onToggleTheme}
@@ -72,39 +91,36 @@ function MainLayout({ theme, onToggleTheme, children }) {
   );
 }
 
-// Placeholder pages
-function Login() {
-  return (
-    <div className="page page-card">
-      <h1>Login</h1>
-      <p>Login form placeholder.</p>
-    </div>
-  );
+// Protected Route Guard: Redirects to /login if not authenticated
+function PrivateRoute({ children }) {
+  const { authenticated, loading } = useAuth();
+  if (loading) return <div className="page"><h2>Loading...</h2></div>;
+  return authenticated ? children : <Navigate to="/login" replace />;
 }
 
-function Register() {
-  return (
-    <div className="page page-card">
-      <h1>Register</h1>
-      <p>Registration form placeholder.</p>
-    </div>
-  );
-}
-
+// Main pages
 function Dashboard() {
+  const { user } = useAuth();
   return (
     <div className="page">
       <h1>Dashboard</h1>
-      <p>Airbnb-style dashboard - upcoming appointments, quick actions, and personalized info will appear here.</p>
+      <p>Welcome, {user && user.role && user.role.charAt(0).toUpperCase() + user.role.slice(1)}!</p>
+      <p>Upcoming appointments, quick actions, and personalized info will appear here.</p>
     </div>
   );
 }
 
 function Profile() {
+  const { user } = useAuth();
   return (
     <div className="page page-card">
       <h1>User Profile</h1>
       <p>Profile details &amp; edit form placeholder.</p>
+      {user && (
+        <div style={{ marginTop: 12 }}>
+          <strong>Role:</strong> {user.role}
+        </div>
+      )}
     </div>
   );
 }
@@ -144,6 +160,43 @@ function NotFound() {
   );
 }
 
+// Main Login/Register Page Wrappers
+function LoginPage({ theme, toggleTheme }) {
+  return (
+    <div className="App">
+      <main className="single-form-content">
+        <button
+          className="theme-toggle"
+          onClick={toggleTheme}
+          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          style={{ position: "fixed", top: 20, right: 20, zIndex: 100 }}
+        >
+          {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
+        </button>
+        <LoginForm />
+      </main>
+    </div>
+  );
+}
+
+function RegisterPage({ theme, toggleTheme }) {
+  return (
+    <div className="App">
+      <main className="single-form-content">
+        <button
+          className="theme-toggle"
+          onClick={toggleTheme}
+          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          style={{ position: "fixed", top: 20, right: 20, zIndex: 100 }}
+        >
+          {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
+        </button>
+        <RegistrationForm />
+      </main>
+    </div>
+  );
+}
+
 // PUBLIC_INTERFACE
 function App() {
   const [theme, setTheme] = useState('light');
@@ -159,62 +212,36 @@ function App() {
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/login"
-          element={
-            <div className="App">
-              <main className="single-form-content">
-                <button
-                  className="theme-toggle"
-                  onClick={toggleTheme}
-                  aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-                  style={{ position: "fixed", top: 20, right: 20, zIndex: 100 }}
-                >
-                  {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
-                </button>
-                <Login />
-              </main>
-            </div>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <div className="App">
-              <main className="single-form-content">
-                <button
-                  className="theme-toggle"
-                  onClick={toggleTheme}
-                  aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-                  style={{ position: "fixed", top: 20, right: 20, zIndex: 100 }}
-                >
-                  {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
-                </button>
-                <Register />
-              </main>
-            </div>
-          }
-        />
-        <Route
-          path="/*"
-          element={
-            <MainLayout theme={theme} onToggleTheme={toggleTheme}>
-              <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="booking" element={<Booking />} />
-                <Route path="slots" element={<SlotManagement />} />
-                <Route path="notifications" element={<Notifications />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </MainLayout>
-          }
-        />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route
+            path="/login"
+            element={<LoginPage theme={theme} toggleTheme={toggleTheme} />}
+          />
+          <Route
+            path="/register"
+            element={<RegisterPage theme={theme} toggleTheme={toggleTheme} />}
+          />
+          <Route
+            path="/*"
+            element={
+              <MainLayout theme={theme} onToggleTheme={toggleTheme}>
+                <Routes>
+                  <Route path="/" element={<PrivateRoute><Navigate to="/dashboard" replace /></PrivateRoute>} />
+                  <Route path="dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+                  <Route path="profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+                  <Route path="booking" element={<PrivateRoute><Booking /></PrivateRoute>} />
+                  <Route path="slots" element={<PrivateRoute><SlotManagement /></PrivateRoute>} />
+                  <Route path="notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </MainLayout>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
