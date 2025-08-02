@@ -29,6 +29,220 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Airbnb inspired navigation bar */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 40px;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  min-height: 64px;
+  box-shadow: 0 1px 12px 0 rgba(0,0,0,0.04);
+}
+
+.navbar__logo {
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #FF5A5F;
+}
+
+.navbar__brand {
+  color: #FF5A5F;
+  font-weight: bold;
+  font-size: 1.4em;
+  font-family: 'Montserrat', Arial, sans-serif;
+  letter-spacing: 1px;
+}
+
+.navbar__links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar__links a {
+  text-decoration: none;
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.navbar__links a:hover {
+  color: #00A699;
+}
+
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar__action {
+  color: var(--text-primary);
+  text-decoration: none;
+  margin-right: 1px;
+  font-weight: 500;
+  padding: 8px 22px;
+  border-radius: 30px;
+  border: 1px solid #FF5A5F;
+  background: #fff;
+  transition: all 0.13s;
+  font-size: 0.98em;
+}
+
+.navbar__action:hover {
+  background: #FFF4F2;
+  color: #FF5A5F;
+}
+
+.navbar__action--primary {
+  background: #FF5A5F;
+  border: 1px solid #FF5A5F;
+  color: #fff;
+  font-weight: 600;
+}
+
+.navbar__action--primary:hover {
+  background: #ff767b;
+  color: #fff;
+  border: 1px solid #ff767b;
+}
+
+/* Responsive navbar */
+@media (max-width: 950px) {
+  .navbar { flex-direction: column; align-items: flex-start; padding: 12px 16px; }
+  .navbar__links { flex-wrap: wrap; gap: 14px;}
+  .navbar__actions { margin-top: 10px;}
+}
+
+/* App Shell & Layout */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary, #f8f9fa);
+}
+
+/* Main content flex layout */
+.app-main-content {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.sidebar {
+  width: 210px;
+  background: #faf9f7;
+  border-right: 1px solid var(--border-color);
+  padding-top: 16px;
+  min-height: calc(100vh - 64px); /* nav height */
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 1rem;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0 20px;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  margin-bottom: 18px;
+}
+
+.sidebar-menu a {
+  text-decoration: none;
+  color: #767676;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-radius: 18px;
+  display: block;
+  transition: background 0.14s, color 0.14s;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+  background: #FFF4F2;
+  color: #FF5A5F;
+}
+
+/* Main content area */
+.main {
+  flex: 1 1 0%;
+  padding: 36px 36px 30px 36px;
+  background: var(--bg-primary, #fff);
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.page {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 16px;
+}
+
+.page-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 14px 0 rgba(60,60,90,.06);
+  padding: 32px 44px 28px 44px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.single-form-content {
+  max-width: 450px;
+  margin: 64px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 18px 0 rgba(75,80,100,0.09), 0 1.5px 6px 0 rgba(255,90,95,0.13);
+  padding: 36px 36px 28px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.theme-toggle-navbar {
+  position: static;
+  margin-left: 16px;
+  background: none;
+  color: #FF5A5F;
+  font-size: 18px;
+  border: none;
+  box-shadow: none;
+  padding: 4px 9px;
+}
+
+.theme-toggle-navbar:hover {
+  background: #FFF4F2;
+  color: #E87A41;
+  opacity: 1;
+}
+
+@media (max-width: 900px) {
+  .app-main-content { flex-direction: column; }
+  .sidebar { width: 100%; min-height: auto; border-right: none; border-bottom: 1px solid #eee;}
+  .main { padding: 22px 5vw; }
+}
+
+@media (max-width: 650px) {
+  .page-card,
+  .single-form-content {
+    padding: 18px 8vw 10px 8vw;
+    margin-top: 22px;
+  }
+}
+
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
