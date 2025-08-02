@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './auth';
 import { LoginForm, RegistrationForm } from './AuthForms';
 import Dashboard from "./Dashboard";
 import Profile from "./Profile";
+import DoctorListAndBooking from "./DoctorListAndBooking";
 
 // Airbnb Inspired Navigation Bar Component
 function Navbar({ theme, onToggleTheme }) {
@@ -100,13 +101,23 @@ function PrivateRoute({ children }) {
   return authenticated ? children : <Navigate to="/login" replace />;
 }
 
-// Booking, SlotManagement, Notifications remain inline for now
-
+// Booking page for patients only; doctors see "Not allowed"
 function Booking() {
+  const { user } = useAuth();
+  if (user && user.role === "patient") {
+    return <DoctorListAndBooking />;
+  }
+  if (user && user.role === "doctor") {
+    return (
+      <div className="page page-card">
+        <h2>Doctors cannot book appointments.</h2>
+        <p>This page is only available for patients.</p>
+      </div>
+    );
+  }
   return (
-    <div className="page">
-      <h1>Book Appointment</h1>
-      <p>Booking UI placeholder.</p>
+    <div className="page page-card">
+      <h2>Please login.</h2>
     </div>
   );
 }
